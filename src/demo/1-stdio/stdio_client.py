@@ -1,16 +1,19 @@
 import asyncio
+import os
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+arg = os.path.join(base_dir, "src/demo/1-stdio/stdio_server.py")
 
 # 创建服务器参数
 server_params = StdioServerParameters(
     # 服务器执行的命令，这里是 python
     command="python",
     # 启动命令的附加参数，这里是运行 stdio_server.py
-    args=["stdio_server.py"],
+    args=[arg],
 )
 
 async def main():

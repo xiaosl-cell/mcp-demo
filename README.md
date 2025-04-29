@@ -53,8 +53,6 @@ LLM_BASE_URL=proxy_base_url
 MODEL=gpt-4o
 ```
 
-
-
 ### 运行示例
 
 执行主程序：
@@ -96,7 +94,7 @@ if __name__ == "__main__":
     "Calculation": {
       "type": "stdio",
       "command": "python",
-      "args": ["${项目完整路径}/stdio_server.py"]
+      "args": ["${与项目根目录相对路径}"]
     }
   }
 }
@@ -105,7 +103,7 @@ if __name__ == "__main__":
 type: 支持stdio,sse
 command: 执行命令 stdio模式必填
 args: 执行命令参数 stdio模式必填
-url: 服务地址 sse模式必填
+url: [服务地址]() sse模式必填
 
 
 ## 依赖项

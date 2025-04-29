@@ -5,11 +5,9 @@ from config.mcp_config import McpConfig
 from mcp_client import McpClient, SseMcpClient, StdioMcpClient
 from llm_client import LLMClient
 
-
-async def load_mcp_config():
+async def load_mcp_config(base_dir: str):
     """加载mcp配置"""
-    config_path = os.path.join('D:\\it\\workspace\\mcp-server-demo', 'server_config.json')
-    mcp_config = ''
+    config_path = os.path.join(base_dir, 'server_config.json')
     with open(config_path, 'r', encoding='utf-8') as f:
         mcp_config = json.load(f)
     mcp_config_list = []
@@ -18,7 +16,8 @@ async def load_mcp_config():
     print(json.dumps([cfg.to_dict() for cfg in mcp_config_list], indent=2))
     return mcp_config_list
 
-async def create_clients(configs: list):
+
+async def create_clients(base_dir: str, configs: list):
     clients = []
     for config in configs:
         if config.type == 'sse':
@@ -27,12 +26,17 @@ async def create_clients(configs: list):
             clients.append(client)
         elif config.type == 'stdio':
             # 创建Stdio客户端
-            client = StdioMcpClient(config.name, config.command, config.args)
+            full_args = []
+            for arg in config.args:
+                full_arg = os.path.join(base_dir, arg)
+                full_args.append(full_arg)
+            client = StdioMcpClient(config.name, config.command, full_args)
             clients.append(client)
         else:
             raise ValueError(f"Invalid client type: {config.type}")
         await client.connect()
     return clients
+
 
 async def get_tool_descriptions(clients: list[McpClient]):
     all_tools = []
@@ -53,6 +57,7 @@ async def process_tool_call(tool_name, arguments, clients):
 
     # 2. 调用工具
     return await target_client.call_tool(tool_name, arguments)
+
 
 async def find_tool_provider(tool_name, clients):
     """查找工具的提供者客户端"""
@@ -78,6 +83,7 @@ async def update_messages_with_tool_result(messages, tool_name, arguments, tool_
     messages.append({"role": "user", "name": tool_name, "content": tool_result.content[0].text})
     return messages
 
+
 async def get_llm_response(messages, llm_client):
     """获取LLM响应并解析"""
     response = llm_client.ask(messages)
@@ -92,21 +98,25 @@ async def get_llm_response(messages, llm_client):
 
     return response_obj, is_tool_call
 
+
 async def main():
+    # 获取项目根目录
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
     # 加载并解析MCP配置
-    mcp_config_list = await load_mcp_config()
+    mcp_config_list = await load_mcp_config(base_dir)
 
     # 构造MCP客户端
-    clients = await create_clients(mcp_config_list)
+    clients = await create_clients(base_dir, mcp_config_list)
 
     # 获取工具描述
     tools_description = await get_tool_descriptions(clients)
 
     # 读取提示词模板构造系统提示词
-    with open('D:\\it\\workspace\\mcp-server-demo\\prompt\\systemPrompt.txt', 'r', encoding='utf-8') as f:
+    prompt_path = os.path.join(base_dir, 'prompt', 'systemPrompt.txt')
+    with open(prompt_path, 'r', encoding='utf-8') as f:
         system_message_template = f.read()
     system_message = system_message_template.replace("{tools_description}", tools_description)
-
 
     # 消息初始化
     messages = [
@@ -117,12 +127,12 @@ async def main():
     # 获取初始LLM响应
     llm_client = LLMClient()
     response_obj, is_tool_call = await get_llm_response(messages, llm_client)
-    
+
     # 循环工具调用
     while is_tool_call:
         tool_name = response_obj['tool']
         arguments = response_obj['arguments']
-        
+
         # 处理工具调用
         tool_result = await process_tool_call(tool_name, arguments, clients)
 
@@ -134,7 +144,7 @@ async def main():
 
         if response_obj is None:
             break
-    
+
     # 输出最终响应
     if 'result' in response_obj and response_obj['message_type'] == 'final_answer':
         print(response_obj['result'])
@@ -144,6 +154,7 @@ async def main():
     # 关闭所有客户端连接
     for client in clients:
         await client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main()) 
