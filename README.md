@@ -47,20 +47,24 @@ pip install -r requirements.txt
 ### 配置LLM
 在项目根目录创建`.env`文件,配置以下环境变量:
 
-### OpenAI API密钥
+```text
 LLM_API_KEY=your_api_key
 LLM_BASE_URL=proxy_base_url
 MODEL=gpt-4o
+```
+
 
 
 ### 运行示例
 
 执行主程序：
+```bash
 1-stdio：python ${项目完整路径}/src/demo/1-stdio/stdio_client.py}
 2-sse:
   - python ${项目完整路径}/src/demo/2-sse/sse_server.py
   - python ${项目完整路径}/src/demo/2-sse/sse_client.py
 llm: python ${项目完整路径}/src/demo/llm/host.py
+```
 
 
 ### 自定义MCP服务
@@ -113,4 +117,4 @@ url: 服务地址 sse模式必填
 
 ## 许可证
 
-本项目遵循[许可证名称]开源许可。 
+本项目遵循[MIT]开源许可。 
