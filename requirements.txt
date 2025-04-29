@@ -1,0 +1,4 @@
+mcp>=1.2.0
+openai>=1.10.0
+asyncio>=3.4.3
+python-dotenv>=1.0.0

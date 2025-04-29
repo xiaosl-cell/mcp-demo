@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "Calculation": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["${项目完整路径}/src/demo/llm/mcp_server/stdio_server.py"]
+    }
+  }
+}
