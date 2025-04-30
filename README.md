@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-这是一个基于MCP（Model Context Protocol）的服务器演示项目，用于展示如何构建和使用MCP服务，实现大模型与工具的交互集成。该项目主要演示了如何创建MCP服务器、构建MCP客户端，以及如何利用LLM（大型语言模型）进行工具调用和编排。
+这是一个基于MCP（Model Context Protocol）的服务演示项目，用于展示如何构建和使用MCP服务，实现大模型与工具的交互集成。该项目主要演示了如何创建MCP服务、构建MCP客户端，以及如何利用LLM（大型语言模型）进行工具调用和编排。
 
 ## 项目结构
 
@@ -16,11 +16,11 @@ mcp-demo/
 │       │   ├── config/      # 配置相关
 │       │   ├── llm/         # LLM客户端实现
 │       │   ├── mcp_client/  # MCP客户端实现
-│       │   ├── mcp_server/  # MCP服务器实现
+│       │   ├── mcp_server/  # MCP服务实现
 │       │   └── host.py      # 主程序入口
 │       ├── 1-stdio/         # 标准输入输出方式的MCP演示
 │       └── 2-sse/           # SSE方式的MCP演示
-├── server_config.json       # 服务器配置文件
+├── server_config.json       # 服务配置文件
 └── requirements.txt         # 项目依赖
 ```
 
@@ -37,7 +37,7 @@ pip install -r requirements.txt
 
 - 支持多种MCP通信方式：
   - 标准输入/输出 (stdio)
-  - 服务器发送事件 (SSE)
+  - SSE通信协议 (SSE)
 - 提供基本计算工具服务
 - 支持大模型工具调用与编排
 - 可扩展的工具注册机制
@@ -67,12 +67,12 @@ llm: python ${项目完整路径}/src/demo/llm/host.py
 
 ### 自定义MCP服务
 
-您可以在`mcp_server`目录下创建自己的MCP服务器，例如：
+您可以在`mcp_server`目录下创建自己的MCP服务，例如：
 
 ```python
 from mcp.server.fastmcp import FastMCP
 
-# 创建一个MCP服务器
+# 创建一个MCP服务
 mcp = FastMCP("自定义服务名称")
 
 @mcp.tool(name="tool_name", description="工具描述")
@@ -81,12 +81,12 @@ async def tool_function(param1: type, param2: type) -> return_type:
     return result
 
 if __name__ == "__main__":
-    # 启动服务器
+    # 启动服务
     mcp.run()
 ```
 
 ### 配置MCP服务
-编辑`server_config.json`文件，配置MCP服务器：
+编辑`server_config.json`文件，配置MCP服务：
 
 ```json
 {
