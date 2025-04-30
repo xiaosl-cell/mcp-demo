@@ -100,10 +100,10 @@ if __name__ == "__main__":
 }
 ```
 
-type: 支持stdio,sse
-command: 执行命令 stdio模式必填
-args: 执行命令参数 stdio模式必填
-url: [服务地址]() sse模式必填
+- type: 支持stdio,sse
+- command: 执行命令 stdio模式必填
+- args: 执行命令参数 stdio模式必填
+- url: 服务地址 sse模式必填
 
 
 ## 依赖项
